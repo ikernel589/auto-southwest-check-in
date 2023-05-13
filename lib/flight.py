@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import json
 import os
 from datetime import datetime
@@ -22,7 +21,9 @@ class Flight:
         self.departure_airport = flight_info["departureAirport"]["name"]
         self.destination_airport = flight_info["arrivalAirport"]["name"]
         self.departure_time = self._get_flight_time(flight_info)
+        self.local_departure_date = flight_info["departureDate"]
         self.local_departure_time = flight_info["departureTime"]
+        self.local_departure_date_time = f"{flight_info['departureDate']} {flight_info['departureTime']}"
 
     def _get_flight_time(self, flight: Dict[str, Any]) -> datetime:
         flight_date = f"{flight['departureDate']} {flight['departureTime']}"

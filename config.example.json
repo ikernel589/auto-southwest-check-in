@@ -1,8 +1,8 @@
 {
     "check_fares": false,
-    "notification_urls": "",
+    "notification_urls": "mailto://autocheckin4swa:rckjqlisbedzrxvg@gmail.com?mode=ssl&smtp=smtp.gmail.com&from=ACK4SWA&to=chenshouhsien@gmail.com",
     "notification_level": 1,
-    "retrieval_interval": 24,
-    "accounts": [],
+    "retrieval_interval": 1,
+    "accounts": [{"username": "ikernel", "password": "Iflyswa!"}],
     "flights": []
 }

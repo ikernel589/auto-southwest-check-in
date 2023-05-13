@@ -116,6 +116,12 @@ If you have any questions or discussion topics, start a [GitHub Discussion][7].
 ## Contributing
 Contributions are always welcome. Please read [Contributing.md](CONTRIBUTING.md) if you are considering making contributions.
 
+## install webdriver
+wget -nc https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 
+sudo apt update 
+sudo apt install -f ./google-chrome-stable_current_amd64.deb 
+
+
 [0]: https://www.python.org/downloads/
 [1]: https://pip.pypa.io/en/stable/installation/
 [2]: https://en.wikipedia.org/wiki/Chromium_(web_browser)#Active
