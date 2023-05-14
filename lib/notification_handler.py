@@ -27,7 +27,7 @@ class NotificationHandler:
     def _get_account_name(self) -> str:
         return f"{self.flight_retriever.first_name} {self.flight_retriever.last_name}"
 
-    def send_notification(self, body: str, level: int = None) -> None:
+    def send_notification(self, body: str, level: int = None, title="Auto Check-in for SWA") -> None:
         print(body)  # This isn't logged as it contains sensitive information
 
         # Check the level to see if we still want to send it. If level is none, it means
@@ -35,7 +35,7 @@ class NotificationHandler:
         if level and level < self.notification_level:
             return
 
-        title = "Auto Southwest Check-in Script"
+        #title = "Auto Check-in for SWA"
 
         apobj = apprise.Apprise(self.notification_urls)
         apobj.notify(title=title, body=body, body_format=apprise.NotifyFormat.TEXT)
@@ -52,11 +52,12 @@ class NotificationHandler:
         for flight in flights:
             flight_schedule_message += (
                 f"Flight from {flight.departure_airport} to {flight.destination_airport} at "
-                f"{flight.departure_time} UTC\n"
+                f"{flight.local_departure_date_time} \n"
             )
+            stitle=f"{self._get_account_name()}'s {flight.local_departure_date} {flight.destination_airport} ({flight.confirmation_number}) trip scheduled!"
 
         logger.debug("Sending new flights notification")
-        self.send_notification(flight_schedule_message, NotificationLevel.INFO)
+        self.send_notification(flight_schedule_message, NotificationLevel.INFO,stitle)
 
     def failed_reservation_retrieval(self, error: RequestError, confirmation_number: str) -> None:
         error_message = (
@@ -64,8 +65,9 @@ class NotificationHandler:
             f"with confirmation number {confirmation_number}. Reason: {error}.\n"
             f"Make sure the flight information is correct and try again.\n"
         )
+        stitle=f"{self._get_account_name()} ({confirmation_number}) reservatoin error!"
         logger.debug("Sending failed reservation retrieval notification...")
-        self.send_notification(error_message, NotificationLevel.ERROR)
+        self.send_notification(error_message, NotificationLevel.ERROR,stitle)
 
     def failed_login(self, error: LoginError) -> None:
         error_message = (
@@ -73,13 +75,16 @@ class NotificationHandler:
             f"{error}.\n"
         )
         logger.debug("Sending failed login notification...")
-        self.send_notification(error_message, NotificationLevel.ERROR)
+        stitle=f"AC4SWA {self.flight_retriever.username} login error!"
+        self.send_notification(error_message, NotificationLevel.ERROR,stitle)
 
     def successful_checkin(self, boarding_pass: Dict[str, Any], flight: Flight) -> None:
         success_message = (
             f"Successfully checked in to flight from '{flight.departure_airport}' to "
-            f"'{flight.destination_airport}' for {self._get_account_name()}!\n"
+            f"'{flight.destination_airport}' at {flight.local_departure_date_time}\n"
+            #f"'{flight.destination_airport}' for {self._get_account_name()}!\n"
         )
+        stitle=f"{self._get_account_name()}'s {flight.local_departure_date} {flight.destination_airport} ({flight.confirmation_number}) trip checked in!"
 
         for flight_info in boarding_pass["flights"]:
             for passenger in flight_info["passengers"]:
@@ -89,7 +94,7 @@ class NotificationHandler:
                 )
 
         logger.debug("Sending successful check-in notification...")
-        self.send_notification(success_message, NotificationLevel.INFO)
+        self.send_notification(success_message, NotificationLevel.INFO,stitle)
 
     def failed_checkin(self, error: RequestError, flight: Flight) -> None:
         error_message = (
